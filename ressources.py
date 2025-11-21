@@ -4,4 +4,8 @@ pygame.init()
 
 ecran = pygame.display.set_mode((300, 200))
 
-pygame.quit()
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
