@@ -1,17 +1,20 @@
-import csv
+from ressources import *
 
-entetes = ['id_monde','monde_name','monde_date','last_connexion_date']
+# la liste des data c mieux de le mettre dans ressources au moins on y a accès partout
 
-data = [
-        {'id_monde':'','monde_name':'','monde_date':'','last_connexion_date':''},
-        {'id_monde':'','monde_name':'','monde_date':'','last_connexion_date':''},
-        {'id_monde':'','monde_name':'','monde_date':'','last_connexion_date':''},
-    ]
+def creation_bdd(entetes):
+    try:
+        with open('biotope.csv', 'w') as f:
+            writer = csv.DictWriter(f, fieldnames=entetes)
+            writer.writeheader()
+        # J'ai enlevé "writer.writerows()" parce que il faut absolument un dico mais la une liste suffit
 
-def fichier_csv(entetes, data):
-    with open('biotope.csv', 'w') as f:
-        writer = csv.DictWriter(f, fieldnames=entetes)
-        writer.writeheader()
-        writer.writerows(data)
-
-fichier_csv(entetes, data)
+    # Je met "as e" c'est pour récupérer l'erreur mais je l'affiche pas parce que l'utilisateur s'en fou de savoir l'erreur exacte
+    # si probleme lors du dev et qu'il faut l'erreur exacte alors : "print(f"Biotop n'arrive pas à créer la base de données, il faut accorder les permissions à Biotop ! {e}")"
+    except PermissionError as e:
+        print("Biotop n'arrive pas à créer la base de données, il faut accorder les permissions à Biotop !")
+        return
+    except Exception as e:
+        print("Une erreur inattendu s'est produite, veuillez réessayer !")
+        return
+    
