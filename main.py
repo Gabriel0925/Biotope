@@ -42,19 +42,56 @@ class Button:
 # Pour entry users c pygame_gui qui gère tout
 class EntryUsers:
     def __init__(self, x, y, width, height, default_text=""):
-        self.text_input = pg_gui.elements.UITextEntryLine(relative_rect=pg.Rect((x, y), (width, height)))
-        self.text_input.set_text(default_text)
-        self.text = default_text
+        self.placeholder = default_text
+        self.cleared = False       # Indique si le placeholder a été effacé
+        self.had_focus = False     # Pour détecter perte de focus (en gros si t'es pas en train d'ecrire)
+        self.text = ""             
+
+        self.text_input = pg_gui.elements.UITextEntryLine(
+            relative_rect=pg.Rect((x, y), (width, height))
+        )
+        self.text_input.set_text(default_text)  # On affiche le placeholder au départ
 
     def get_text(self):
         return self.text_input.get_text()
 
     def handle_event(self, event):
-        # pygame_gui permet de gèrer auto. le clic et la saisi
+        # Effacer le placeholder quand on clique dans la zone
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if self.text_input.rect.collidepoint(event.pos):
+                if not self.cleared:
+                    self.text_input.set_text("")
+                    self.cleared = True
+
+        # Quand on valide la saisie (Enter ou clic ailleurs)
         if event.type == pg_gui.UI_TEXT_ENTRY_FINISHED:
             if event.ui_element == self.text_input:
-                self.text = event.text
-                print(f"Tu viens d'écrire : {self.text}") 
+                txt = event.text.strip()
+
+                # Si rien n'est écrit, on remet le placeholder
+                if txt == "" or txt == self.placeholder:
+                    self.text_input.set_text(self.placeholder)
+                    self.cleared = False
+                    self.text = ""
+                else:
+                    self.text = txt
+
+                print(f"Tu viens d'écrire : {self.text}")
+
+    # Vérifie le focus pour remettre le placeholder si la zone est vide
+    def update(self, manager):
+        has_focus = (manager.focused_set == {self.text_input})
+
+        # Si on perd le focus et que le champ est vide, on remet le placeholder
+        if self.had_focus and not has_focus:
+            txt = self.text_input.get_text().strip()
+            if txt == "" or txt == self.placeholder:
+                self.text_input.set_text(self.placeholder)
+                self.cleared = False
+                self.text = ""
+
+        # Mise à jour de l'état du focus
+        self.had_focus = has_focus
 
 class Game:
     def __init__(self):
@@ -89,6 +126,7 @@ class Game:
 
             self.manager.update(0)
             # On dessine le champs Entry
+            entry1.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
             self.manager.draw_ui(self.screen)
             bouton1.dessiner(self.screen)
 

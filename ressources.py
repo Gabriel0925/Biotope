@@ -3,7 +3,7 @@ import csv
 import ctypes
 import pygame_gui as pg_gui # Il faut faire un pip install
 from datetime import date
-import pandas
+import pandas # Il faut faire un pip install (parce que moi je l'avais pas)
 
 # Couleur de Biotop (je met en majuscule pour la lisibilité)
 COLOR_ACCENT = "#355E3B"
