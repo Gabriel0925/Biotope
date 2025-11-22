@@ -10,7 +10,7 @@ def save_monde(monde_name, monde_date_last_connexion):
     iden = pandas.read_csv("data_base.csv")
     pass
 
-save_monde("monde_name", "monde_date_last_connexion")
+
 
 def creation_bdd(entetes):
     try:
