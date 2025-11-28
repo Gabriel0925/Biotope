@@ -102,8 +102,8 @@ class Game:
         self.screen = pg.display.set_mode(self.screen_size)
         pg.display.set_caption("Biotope")
         # C'est pour l'icône de l'app j'en ai fais une relativement simple mais au moins on a tt les droits d'auteur !
-        icone_Biotop = pg.image.load("Asset/Logo_Biotop.png")
-        pg.display.set_icon(icone_Biotop)
+        icone_Biotope = pg.image.load("Asset/Logo Biotope.png")
+        pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
 
     # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
