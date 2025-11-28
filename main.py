@@ -5,7 +5,7 @@ pg.init()
 
 # J'ai mis le bouton dans une class au moins on peut tout le temps le réutilliser
 class Button:
-    def __init__(self, text, width, height, position, screen):
+    def __init__(self, text, width, height, position, screen, entry1):
         # Initialisation des attributs
         self.pressed = False
 
@@ -16,6 +16,7 @@ class Button:
         self.text_surface = self.font.render(text, True, COLOR_TEXT_PRINCIPAL)
         # On doit créer un rectangle pour mettre du text dans un bouton
         self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
+        self.entry1 = entry1
 
     def dessiner(self, screen):
         pg.draw.rect(screen, self.top_color, self.top_rectangle, border_radius=CORNER)
@@ -34,7 +35,9 @@ class Button:
                 self.pressed = True
             else:
                 if self.pressed == True:
-                    creer_monde("Monde1", date_actuelle)
+                    monde_name = self.entry1.get_text()
+                    if monde_name and monde_name != self.entry1.placeholder:
+                        creer_monde(monde_name, date_actuelle)
                     self.pressed = False
         else:
             self.top_color = COLOR_ACCENT
@@ -108,7 +111,7 @@ class Game:
         running = True
         
         entry1 = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Veuillez entrer qqch")
-        bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen)
+        bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen,entry1)
 
         while running:
             for event in pg.event.get():
