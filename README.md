@@ -2,7 +2,7 @@
 
 Biotope permet de concevoir un monde virtuel où chaque utilisateur construit et gère son propre écosystème.
 
-![Logo Biotop pour le moment](<Asset/Logo_Biotop.png>)
+![Logo Biotop pour le moment](<Asset/Logo Biotope.png>)
 
 ## Sommaire
 
