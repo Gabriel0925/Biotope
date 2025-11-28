@@ -34,7 +34,7 @@ class Button:
                 self.pressed = True
             else:
                 if self.pressed == True:
-                    print("Tu viens de cliquer")
+                    creer_monde("Monde1", date_actuelle)
                     self.pressed = False
         else:
             self.top_color = COLOR_ACCENT
@@ -75,7 +75,6 @@ class EntryUsers:
                     self.text = ""
                 else:
                     self.text = txt
-
                 print(f"Tu viens d'écrire : {self.text}")
 
     # Vérifie le focus pour remettre le placeholder si la zone est vide

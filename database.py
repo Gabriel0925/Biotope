@@ -1,14 +1,26 @@
 from ressources import *
 
-def generateur_id_monde():
-    pass
+def generateur_id_monde():  #l'id ce sera 4 chiffres random 
+    random_id = random.randint(1000, 9999)
+    iden = pandas.read_csv("data_base.csv")
+    existing_ids = iden['id_monde']
+    while random_id in existing_ids: # tant que l'id généré existe déjà dans la colonne id_monde on en génère un nouveau
+        random_id = random.randint(1000, 9999)
+    return random_id    
 
-def save_monde(monde_name, monde_date_last_connexion):
-    id_monde = 1
+def creer_monde(monde_name, monde_date_last_connexion):
+    id_monde = generateur_id_monde() # on utilise la fonction pour générer un id unique
     monde_date_creation = date_actuelle
 
-    iden = pandas.read_csv("data_base.csv")
-    pass
+    # ça c'est le truc pour écrire dans le csv, posez pas de questions
+    write_data = pandas.DataFrame([{
+        "id_monde": id_monde,
+        "monde_name": monde_name,
+        "monde_date_creation": monde_date_creation,
+        "monde_date_last_connexion": monde_date_last_connexion
+    }])
+    write_data.to_csv("data_base.csv", mode='a', index=False, header=False)
+    print(f"Le monde '{monde_name}' a été créé avec l'ID {id_monde}.")
 
 
 
@@ -27,3 +39,4 @@ def creation_bdd(entetes):
     except Exception as e:
         print("Une erreur inattendu s'est produite, veuillez réessayer !")
         return
+
