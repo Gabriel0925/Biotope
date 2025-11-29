@@ -1,5 +1,6 @@
 from ressources import *
-from database import *
+# Quand ce n'est pas un fichier ressource le mieux c'est d'indiquer ce qu'on veut
+from database import creer_monde, creation_bdd
 
 pg.init()
 
@@ -12,7 +13,7 @@ class Button:
         # Création du rectangle pour button
         self.top_rectangle = pg.Rect(position, (width, height))
         self.top_color = COLOR_ACCENT
-        self.font = pg.font.Font(None, 30)
+        self.font = pg.font.Font(None, H3)
         self.text_surface = self.font.render(text, True, COLOR_TEXT_PRINCIPAL)
         # On doit créer un rectangle pour mettre du text dans un bouton
         self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
@@ -60,7 +61,9 @@ class EntryUsers:
     def handle_event(self, event):
         # Effacer le placeholder quand on clique dans la zone
         if event.type == pg.MOUSEBUTTONDOWN:
-            if self.text_input.rect.collidepoint(event.pos):
+            # Il faut vérifier d'abord si self.text_input n'est pas à None
+            # Le get_abs_rect() ça permet de recup la position du clique sur l'écran et pas la position dans le parent
+            if self.text_input and self.text_input.get_abs_rect().collidepoint(event.pos):
                 if not self.cleared:
                     self.text_input.set_text("")
                     self.cleared = True
@@ -77,7 +80,7 @@ class EntryUsers:
                     self.text = ""
                 else:
                     self.text = txt
-                messagebox.showinfo("Ce que tu as écrit", f"Tu viens d'écrire : {self.text}") # jai enlever le print mais la ligne est inutile..
+                #creer_monde(monde_name, monde_date_last_connexion)
 
     # Vérifie le focus pour remettre le placeholder si la zone est vide
     def update(self, manager):
@@ -104,13 +107,17 @@ class Game:
         icone_Biotope = pg.image.load("Asset/Logo Biotope.png")
         pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
-    
+
+        # Texte Bienvenue
+        self.font_txt_bienvenue = pg.font.Font(None, H1)
+        self.txt_bienvenue = self.font_txt_bienvenue.render("Bienvenue sur Biotope", True, COLOR_TEXT_PRINCIPAL)
+        self.text_bienvenue = self.txt_bienvenue.get_rect(topleft=(25, 25))
 
     # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
     def run(self):
         running = True
         
-        entry1 = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Veuillez entrer qqch")
+        entry1 = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Nom du monde")
         bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen, entry1)
 
         while running:
@@ -129,6 +136,7 @@ class Game:
             self.screen.fill(COLOR_BACKGROUND)
 
             self.manager.update(0)
+            self.screen.blit(self.txt_bienvenue, self.text_bienvenue)
             # On dessine le champs Entry
             entry1.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
             self.manager.draw_ui(self.screen)

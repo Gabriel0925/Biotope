@@ -6,18 +6,25 @@ import pygame_gui as pg_gui # Il faut faire un pip install
 from datetime import date
 import pandas # Il faut faire un pip install (parce que moi je l'avais pas)
 import random
-from tkinter import messagebox
+from tkinter import messagebox # il faut faire un pip install
 
 # Couleur de Biotope (je met en majuscule pour la lisibilité)
 COLOR_ACCENT = "#355E3B"
-COLOR_ACCENT_HOVER = "#447B4C"
+COLOR_ACCENT_HOVER = "#4A7650"
 
-COLOR_BACKGROUND = "#101010"
-COLOR_BACKGROUND_CARD = "#252525"
-COLOR_BACKGROUND_CARD_HOVER = "#2F2F2F"
+COLOR_BACKGROUND = "#000000"
+COLOR_BACKGROUND_CARD = "#232323"
+COLOR_BACKGROUND_CARD_HOVER = "#353535"
 
 COLOR_TEXT_PRINCIPAL = "#E0E0E0"
-COLOR_TEXT_SECONDAIRE = "#A0A0A0"
+COLOR_TEXT_SECONDAIRE = "#7B7B7B"
+
+# Taille et Police
+H1 = 50
+H2 = 38
+H3 = 30
+P = 26
+P_SMALL = 24 
 
 # Caractéristiques composants
 CORNER = 20
