@@ -5,7 +5,7 @@ def generateur_id_monde():
         iden = pandas.read_csv("data_base.csv")
         existing_ids = iden['id_monde']
     except Exception as e:
-        print("Erreur lors de la connexion à la base de données lors de l'enregistrement du monde.")
+        messagebox.showerror("","Erreur lors de la connexion à la base de données lors de l'enregistrement du monde.")
         return
     
     random_id = random.randint(1000, 9999) #l'id ce sera 4 chiffres random 
@@ -14,7 +14,7 @@ def generateur_id_monde():
     while random_id in existing_ids: # tant que l'id généré existe déjà dans la colonne id_monde on en génère un nouveau
         random_id = random.randint(1000, 9999)
         if compteur >= 1000:
-            print("Une erreur s'est produite lors de la création du monde.")
+            messagebox.showerror("","Nombre limite de monde atteint")
             break
         compteur += 1
 
@@ -26,7 +26,7 @@ def exist_monde_name(monde_name):
         for row in reader:
             # "row["monde_name"]" ça permet d'avoir accès au data grâce au nom des headers
             if monde_name in row["monde_name"]:
-                print("Ce nom de monde est déjà utilisé, essayez en un autre.")
+                messagebox.showwarning("","Ce nom de monde est déjà utilisé, essayez en un autre.")
                 # Je le met en True dès qu'il y a une "erreur" en gros
                 return True
     return False
@@ -37,10 +37,10 @@ def creer_monde(monde_name, monde_date_last_connexion):
 
     nb_limite_caractere = 60
     if len(monde_name) >= nb_limite_caractere:
-        print(f"Le nom du monde est trop long ! Il ne doit pas dépasser {nb_limite_caractere} caractères.")
+        messagebox.showwarning("",f"Le nom du monde est trop long ! Il ne doit pas dépasser {nb_limite_caractere} caractères.")
         return
     if monde_name.lower() in li_mots_sensible:
-        print("Le nom du monde est jugé sensible par Biotope. Essayez un autre nom.")
+        messagebox.showwarning("","Le nom du monde est jugé sensible par Biotope. Essayez un autre nom.")
         return
     
     verif_stop_fonction = exist_monde_name(monde_name)
@@ -55,7 +55,7 @@ def creer_monde(monde_name, monde_date_last_connexion):
         "monde_date_last_connexion": monde_date_last_connexion
     }])
     write_data.to_csv(nom_fichier_bdd, mode='a', index=False, header=False)
-    print(f"Le monde '{monde_name}' a été créé avec l'ID {id_monde}.")
+    messagebox.showinfo(f"Creation de {monde_name}",f"Le monde '{monde_name}' a été créé avec l'ID {id_monde}.")
 
 def creation_bdd(entetes):
     try:
@@ -67,9 +67,9 @@ def creation_bdd(entetes):
     # Je met "as e" c'est pour récupérer l'erreur mais je l'affiche pas parce que l'utilisateur s'en fou de savoir l'erreur exacte
     # si probleme lors du dev et qu'il faut l'erreur exacte alors : "print(f"Biotope n'arrive pas à créer la base de données, il faut accorder les permissions à Biotope ! {e}")"
     except PermissionError as e:
-        print("Biotope n'arrive pas à créer la base de données, il faut accorder les permissions à Biotope !")
+        messagebox.showerror("","Biotope n'arrive pas à créer la base de données, il faut accorder les permissions à Biotope !")
         return
     except Exception as e:
-        print("Une erreur inattendu s'est produite, veuillez réessayer !")
+        messagebox.showerror("","Une erreur inattendu s'est produite, veuillez réessayer !")
         return
 

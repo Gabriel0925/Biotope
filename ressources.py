@@ -1,11 +1,12 @@
 import pygame as pg # Il faut faire un pip install
 import csv
+import time
 import ctypes
 import pygame_gui as pg_gui # Il faut faire un pip install
 from datetime import date
 import pandas # Il faut faire un pip install (parce que moi je l'avais pas)
 import random
-
+from tkinter import messagebox
 
 # Couleur de Biotope (je met en majuscule pour la lisibilité)
 COLOR_ACCENT = "#355E3B"
@@ -53,7 +54,7 @@ li_mots_sensible = [
     # Discrimination
     "nègre", "bougnoule", "juif", "arab", "noir", "blanc", "asiatique", "pédé", "gouine",
     "trans", "handicapé", "retardé", "feminazi", "islam", "christianisme", "raciste", "xénophobe",
-    "homophobe", "antisémite", "supremaciste",
+    "homophobe", "antisémite", "supremaciste","hitler","nazi"
 
     # Piratage et triche
     "hack", "pirate", "cheat", "triche", "exploit", "virus", "malware", "phishing", "ddos",
@@ -66,7 +67,7 @@ li_mots_sensible = [
 
     # Autres termes inappropriés
     "spam", "arnaque", "escroquerie", "fake", "deepfake", "propagande", "désinformation",
-    "complot", "illuminati", "reptilien", "qanon", "vaccin", "covid", "5g", "nouvel ordre mondial"
+    "complot", "illuminati", "reptilien", "qanon", "vaccin", "covid", "5g", "nouvel ordre mondial","caca","pipi"
 ]
 
 # J'ai rajouté "monde_date_creation" pour le moment ou le monde a été crée

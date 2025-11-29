@@ -48,8 +48,7 @@ class EntryUsers:
         self.placeholder = default_text
         self.cleared = False       # Indique si le placeholder a été effacé
         self.had_focus = False     # Pour détecter perte de focus (en gros si t'es pas en train d'ecrire)
-        self.text = ""             
-
+        self.text = ""
         self.text_input = pg_gui.elements.UITextEntryLine(
             relative_rect=pg.Rect((x, y), (width, height))
         )
@@ -78,7 +77,7 @@ class EntryUsers:
                     self.text = ""
                 else:
                     self.text = txt
-                print(f"Tu viens d'écrire : {self.text}")
+                messagebox.showinfo("Ce que tu as écrit", f"Tu viens d'écrire : {self.text}") # jai enlever le print mais la ligne est inutile..
 
     # Vérifie le focus pour remettre le placeholder si la zone est vide
     def update(self, manager):
@@ -105,15 +104,17 @@ class Game:
         icone_Biotope = pg.image.load("Asset/Logo Biotope.png")
         pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
+    
 
     # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
     def run(self):
         running = True
         
         entry1 = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Veuillez entrer qqch")
-        bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen,entry1)
+        bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen, entry1)
 
         while running:
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
@@ -121,6 +122,7 @@ class Game:
                     # ça permet que quand on fait un "control" "w" ça ferme la fenetre
                     if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
                         running = False
+                        
                 entry1.handle_event(event)
                 self.manager.process_events(event)
 
