@@ -38,15 +38,15 @@ def creer_monde(monde_name, monde_date_last_connexion):
     nb_limite_caractere = 60
     if len(monde_name) >= nb_limite_caractere:
         messagebox.showwarning("Erreur",f"Le nom du monde est trop long ! Il ne doit pas dépasser {nb_limite_caractere} caractères.")
-        return
+        return False
     if monde_name.lower() in li_mots_sensible:
         messagebox.showwarning("Erreur de sensibilité","Le nom du monde est jugé sensible par Biotope. Essayez un autre nom.")
-        return
+        return False
     
     verif_stop_fonction = exist_monde_name(monde_name)
 
     if verif_stop_fonction == True:
-        return
+        return False
     # ça c'est le truc pour écrire dans le csv, posez pas de questions
     write_data = pandas.DataFrame([{
         "id_monde": id_monde,
@@ -56,7 +56,7 @@ def creer_monde(monde_name, monde_date_last_connexion):
     }])
     write_data.to_csv(nom_fichier_bdd, mode='a', index=False, header=False)
     messagebox.showinfo(f"Création de {monde_name}",f"Le monde '{monde_name}' a été créé avec l'ID {id_monde}.")
-    return
+    return True
 
 def creation_bdd(entetes):
     try:

@@ -6,7 +6,7 @@ pg.init()
 
 # J'ai mis le bouton dans une class au moins on peut tout le temps le réutilliser
 class Button:
-    def __init__(self, text, width, height, position, screen, entry1):
+    def __init__(self, text, width, height, position, screen, entry=None):
         # Initialisation des attributs
         self.pressed = False
 
@@ -18,7 +18,7 @@ class Button:
         self.text_surface = self.font.render(self.text, True, MAIN_COLOR_TEXT)
         # On doit créer un rectangle pour mettre du text dans un bouton
         self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
-        self.entry1 = entry1
+        self.entry = entry
 
     #cette méthode affiche le bouton
     def update(self, screen):
@@ -28,9 +28,9 @@ class Button:
     #cette méthode vérifie si la souris est sur le rectagle quand elle est appelée
     def check_click(self,position):
         if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
-            monde_name = self.entry1.get_text()
-            if monde_name and monde_name != self.entry1.placeholder:
-                creer_monde(monde_name, date_actuelle)
+            return True
+        return False
+                
     
     #cette méthode change la couleur de l'écriture quand on passe la souris dessus
     def change_color(self, position):
@@ -98,23 +98,17 @@ class Game:
         pg.init()
         self.screen_size = ((1050, 600))
         self.screen = pg.display.set_mode(self.screen_size)
-        pg.display.set_caption("Biotope")
         # C'est pour l'icône de l'app j'en ai fais une relativement simple mais au moins on a tt les droits d'auteur !
         icone_Biotope = pg.image.load("Asset/Logo Biotope.png")
         pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
 
-        # Texte Bienvenue
-        self.font_txt_bienvenue = pg.font.Font(None, H1)
-        self.txt_bienvenue = self.font_txt_bienvenue.render("Bienvenue sur Biotope", True, MAIN_COLOR_TEXT)
-        self.text_bienvenue = self.txt_bienvenue.get_rect(topleft=(25, 25))
-
-    # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
-    def run(self):
+    def run_play(self):
         running = True
-        
-        entry1 = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Nom du monde")
-        bouton1 = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen, entry1)
+
+        pg.display.set_caption("Game")
+    
+        back_button = Button("Retour", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen)
 
         while running:
 
@@ -126,20 +120,59 @@ class Game:
                     if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
                         running = False
                 if event.type == pg.MOUSEBUTTONDOWN:
-                    bouton1.check_click(pg.mouse.get_pos())
+                    if back_button.check_click(pg.mouse.get_pos()):
+                        running = False
+                        self.run_main()
+
+            self.screen.fill(COLOR_BACKGROUND)
+            back_button.update(self.screen)
+            back_button.change_color(pg.mouse.get_pos())
+
+            pg.display.flip() # C pour rafraîchir l'écran
+
+    # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
+    def run_main(self):
+        
+        # Texte Bienvenue
+        font_txt_bienvenue = pg.font.Font(None, H1)
+        txt_bienvenue = font_txt_bienvenue.render("Bienvenue sur Biotope", True, MAIN_COLOR_TEXT)
+        text_bienvenue = txt_bienvenue.get_rect(topleft=(25, 25))
+        
+        running = True
+        
+        world_name_entry = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Nom du monde")
+        creation_world_button = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen, world_name_entry)
+
+        while running:
+            pg.display.set_caption("Biotope")
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                if event.type == pg.KEYDOWN:
+                    # ça permet que quand on fait un "control" "w" ça ferme la fenetre
+                    if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
+                        running = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if creation_world_button.check_click(pg.mouse.get_pos()):
+                        monde_name = world_name_entry.get_text()
+                        if monde_name and monde_name != world_name_entry.placeholder:
+                            if creer_monde(monde_name, date_actuelle):
+                                running = False
+                                self.run_play()
                         
-                entry1.handle_event(event)
+                world_name_entry.handle_event(event)
                 self.manager.process_events(event)
 
             self.screen.fill(COLOR_BACKGROUND)
 
             self.manager.update(0)
-            self.screen.blit(self.txt_bienvenue, self.text_bienvenue)
+            self.screen.blit(txt_bienvenue, text_bienvenue)
             # On dessine le champs Entry
-            entry1.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
+            world_name_entry.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
             self.manager.draw_ui(self.screen)
-            bouton1.update(self.screen)
-            bouton1.change_color(pg.mouse.get_pos())
+            creation_world_button.update(self.screen)
+            creation_world_button.change_color(pg.mouse.get_pos())
 
             pg.display.flip() # C pour rafraîchir l'écran
 
@@ -147,4 +180,4 @@ class Game:
 if __name__ == "__main__":
     creation_bdd(entetes_colonne_bdd)
     game = Game()
-    game.run()
+    game.run_main()
