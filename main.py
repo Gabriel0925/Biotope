@@ -11,37 +11,33 @@ class Button:
         self.pressed = False
 
         # Création du rectangle pour button
+        self.text = text
         self.top_rectangle = pg.Rect(position, (width, height))
         self.top_color = COLOR_ACCENT
         self.font = pg.font.Font(None, H3)
-        self.text_surface = self.font.render(text, True, COLOR_TEXT_PRINCIPAL)
+        self.text_surface = self.font.render(self.text, True, MAIN_COLOR_TEXT)
         # On doit créer un rectangle pour mettre du text dans un bouton
         self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
         self.entry1 = entry1
 
-    def dessiner(self, screen):
+    #cette méthode affiche le bouton
+    def update(self, screen):
         pg.draw.rect(screen, self.top_color, self.top_rectangle, border_radius=CORNER)
         screen.blit(self.text_surface, self.text_rectangle)
-        self.check_click()
 
-    def check_click(self):
-        mouse_position = pg.mouse.get_pos()
-        # En gros dès que que la position de la souris est sur le rectangle (qu'on a definie dans init) alors on execute qqch
-        if self.top_rectangle.collidepoint(mouse_position):
-            # Dès que la souris passe sur le bouton
-            if pg.mouse.get_pressed():
-                self.top_color = COLOR_ACCENT_HOVER
-            # Dès que souris délivrent un clic
-            if pg.mouse.get_pressed()[0]:
-                self.pressed = True
-            else:
-                if self.pressed == True:
-                    monde_name = self.entry1.get_text()
-                    if monde_name and monde_name != self.entry1.placeholder:
-                        creer_monde(monde_name, date_actuelle)
-                    self.pressed = False
+    #cette méthode vérifie si la souris est sur le rectagle quand elle est appelée
+    def check_click(self,position):
+        if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
+            monde_name = self.entry1.get_text()
+            if monde_name and monde_name != self.entry1.placeholder:
+                creer_monde(monde_name, date_actuelle)
+    
+    #cette méthode change la couleur de l'écriture quand on passe la souris dessus
+    def change_color(self, position):
+        if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
+            self.text_surface = self.font.render(self.text, True, COLOR_ACCENT_HOVER)
         else:
-            self.top_color = COLOR_ACCENT
+            self.text_surface = self.font.render(self.text, True, MAIN_COLOR_TEXT)
 
 # Pour entry users c pygame_gui qui gère tout
 class EntryUsers:
@@ -110,7 +106,7 @@ class Game:
 
         # Texte Bienvenue
         self.font_txt_bienvenue = pg.font.Font(None, H1)
-        self.txt_bienvenue = self.font_txt_bienvenue.render("Bienvenue sur Biotope", True, COLOR_TEXT_PRINCIPAL)
+        self.txt_bienvenue = self.font_txt_bienvenue.render("Bienvenue sur Biotope", True, MAIN_COLOR_TEXT)
         self.text_bienvenue = self.txt_bienvenue.get_rect(topleft=(25, 25))
 
     # Cette fonction tourne en permanence pour que dès qu'on referme la fenetre soit "detruit" proprement l'app
@@ -129,6 +125,8 @@ class Game:
                     # ça permet que quand on fait un "control" "w" ça ferme la fenetre
                     if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
                         running = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    bouton1.check_click(pg.mouse.get_pos())
                         
                 entry1.handle_event(event)
                 self.manager.process_events(event)
@@ -140,7 +138,8 @@ class Game:
             # On dessine le champs Entry
             entry1.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
             self.manager.draw_ui(self.screen)
-            bouton1.dessiner(self.screen)
+            bouton1.update(self.screen)
+            bouton1.change_color(pg.mouse.get_pos())
 
             pg.display.flip() # C pour rafraîchir l'écran
 
