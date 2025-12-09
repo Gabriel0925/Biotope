@@ -153,6 +153,7 @@ class Game:
         pg.display.set_caption("Game")
     
         back_button = Button(WIDTH_MAIN_BUTTON, HEIGHT_MAIN_BUTTON, (400, 475), self.screen, BACK_COLOR, BACK_HOVER_COLOR, COLOR_BACK_ACCENT, text="Retour")
+        settings_button = Button(WIDTH_HEIGHT_SETTING_BUTTON, WIDTH_HEIGHT_SETTING_BUTTON, (975,25), self.screen, image="Asset/Logo Setting.png")
 
         while running:
 
@@ -167,10 +168,15 @@ class Game:
                     if back_button.check_click(pg.mouse.get_pos()):
                         running = False
                         self.run_main()
+                    if settings_button.check_click(pg.mouse.get_pos()):
+                        running = False
+                        self.run_setting()
 
             self.screen.fill(COLOR_BACKGROUND)
             back_button.update(self.screen)
             back_button.change_color(pg.mouse.get_pos())
+
+            settings_button.update(self.screen)
 
             pg.display.flip() # C pour rafraîchir l'écran
 
@@ -219,12 +225,17 @@ class Game:
             self.screen.fill(COLOR_BACKGROUND)
 
             self.manager.update(0)
+
             self.screen.blit(txt_bienvenue, text_bienvenue)
+
             # On dessine le champs Entry
             world_name_entry.update(self.manager)  # c'est important ca, sinon le placeholder ne revient pas
+            
             self.manager.draw_ui(self.screen)
+
             creation_world_button.update(self.screen)
             creation_world_button.change_color(pg.mouse.get_pos())
+
             settings_button.update(self.screen)
             settings_button.change_color(pg.mouse.get_pos())
 
