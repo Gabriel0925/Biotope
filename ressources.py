@@ -1,12 +1,11 @@
 import pygame as pg # Il faut faire un pip install
 import sys #pour fermer proprement les fenêtres
-import csv
+import sqlite3
 import time
 import ctypes
 import pygame_gui as pg_gui # Il faut faire un pip install
 from datetime import date
 import pandas # Il faut faire un pip install (parce que moi je l'avais pas)
-import random
 from tkinter import messagebox # il faut faire un pip install
 
 # Couleur de Biotope (je met en majuscule pour la lisibilité)
@@ -39,9 +38,6 @@ HEIGHT_MAIN_BUTTON = 50
 WIDTH_HEIGHT_SETTING_BUTTON = 50
 
 date_actuelle = date.today()
-
-# Autre
-nom_fichier_bdd = "data_base.csv"
 
 # Lors de la création du monde
 li_mots_sensible = [
@@ -83,6 +79,3 @@ li_mots_sensible = [
     "spam", "arnaque", "escroquerie", "fake", "deepfake", "propagande", "désinformation",
     "complot", "illuminati", "reptilien", "qanon", "vaccin", "covid", "5g", "nouvel ordre mondial","caca","pipi"
 ]
-
-# J'ai rajouté "monde_date_creation" pour le moment ou le monde a été crée
-entetes_colonne_bdd = ['id_monde','monde_name','monde_date_creation','monde_date_last_connexion']

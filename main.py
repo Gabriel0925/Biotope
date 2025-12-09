@@ -232,6 +232,6 @@ class Game:
 
 # ⬇️ ça permet que le code commence ici 
 if __name__ == "__main__":
-    creation_bdd(entetes_colonne_bdd)
+    creation_bdd()
     game = Game()
     game.run_main()
