@@ -1,4 +1,5 @@
 import pygame as pg # Il faut faire un pip install
+import sys #pour fermer proprement les fenêtres
 import csv
 import time
 import ctypes
@@ -9,8 +10,7 @@ import random
 from tkinter import messagebox # il faut faire un pip install
 
 # Couleur de Biotope (je met en majuscule pour la lisibilité)
-COLOR_ACCENT = "#355E3B"
-COLOR_ACCENT_HOVER = "#4A7650"
+COLOR_MAIN_ACCENT = "#355E3B"
 
 COLOR_BACKGROUND = "#000000"
 COLOR_BACKGROUND_CARD = "#232323"
@@ -18,6 +18,12 @@ COLOR_BACKGROUND_CARD_HOVER = "#353535"
 
 MAIN_COLOR_TEXT = "#E0E0E0"
 COLOR_TEXT_SECONDAIRE = "#7B7B7B"
+COLOR_MAIN_HOVER = "#0DE52A"
+
+#couleur a trouver :
+BACK_COLOR = "red"
+BACK_HOVER_COLOR = "#650F0F"
+COLOR_BACK_ACCENT = "#BD8320"
 
 # Taille et Police
 H1 = 50
@@ -28,8 +34,9 @@ P_SMALL = 24
 
 # Caractéristiques composants
 CORNER = 20
-WIDTH_BUTTON = 250
-HEIGHT_BUTTON = 50
+WIDTH_MAIN_BUTTON = 250
+HEIGHT_MAIN_BUTTON = 50
+WIDTH_HEIGHT_SETTING_BUTTON = 50
 
 date_actuelle = date.today()
 

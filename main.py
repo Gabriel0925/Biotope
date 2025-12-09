@@ -6,38 +6,56 @@ pg.init()
 
 # J'ai mis le bouton dans une class au moins on peut tout le temps le réutilliser
 class Button:
-    def __init__(self, text, width, height, position, screen, entry=None):
+    def __init__(self, width, height, position, screen, color=None, hover_color=None, color_accent=None, text=None, entry=None, image=None ):
         # Initialisation des attributs
         self.pressed = False
 
         # Création du rectangle pour button
+        self.image = image
+        self.color = color
+        self.hover_color = hover_color
         self.text = text
         self.top_rectangle = pg.Rect(position, (width, height))
-        self.top_color = COLOR_ACCENT
         self.font = pg.font.Font(None, H3)
-        self.text_surface = self.font.render(self.text, True, MAIN_COLOR_TEXT)
+        if text!=None:
+            self.top_color = color_accent
+            self.text_surface = self.font.render(self.text, True, self.color)
         # On doit créer un rectangle pour mettre du text dans un bouton
-        self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
+            self.text_rectangle = self.text_surface.get_rect(center=self.top_rectangle.center)
+        elif image!=None:
+            self.surface=pg.image.load(image)
+            self.surface=pg.transform.scale(self.surface,(width, height))
+            self.image_rect = self.surface.get_rect(center=self.top_rectangle.center)
+
         self.entry = entry
 
     #cette méthode affiche le bouton
     def update(self, screen):
-        pg.draw.rect(screen, self.top_color, self.top_rectangle, border_radius=CORNER)
-        screen.blit(self.text_surface, self.text_rectangle)
+        if self.text!=None:
+            pg.draw.rect(screen, self.top_color, self.top_rectangle, border_radius=CORNER)
+            screen.blit(self.text_surface, self.text_rectangle)
+        elif self.image!=None:
+            screen.blit(self.surface, self.image_rect)
 
     #cette méthode vérifie si la souris est sur le rectagle quand elle est appelée
     def check_click(self,position):
-        if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
-            return True
-        return False
+        if self.text!=None:
+            if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
+                return True
+            return False
+        elif self.image!=None:
+            if position[0] in range(self.image_rect.left,self.image_rect.right) and position[1] in range(self.image_rect.top, self.image_rect.bottom):
+                return True
+            return False
                 
     
     #cette méthode change la couleur de l'écriture quand on passe la souris dessus
     def change_color(self, position):
-        if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
-            self.text_surface = self.font.render(self.text, True, COLOR_ACCENT_HOVER)
-        else:
-            self.text_surface = self.font.render(self.text, True, MAIN_COLOR_TEXT)
+        if self.text!=None:
+            if position[0] in range(self.text_rectangle.left,self.text_rectangle.right) and position[1] in range(self.text_rectangle.top, self.text_rectangle.bottom):
+                self.text_surface = self.font.render(self.text, True, self.hover_color)
+            else:
+                self.text_surface = self.font.render(self.text, True, self.color)
 
 # Pour entry users c pygame_gui qui gère tout
 class EntryUsers:
@@ -76,7 +94,6 @@ class EntryUsers:
                     self.text = ""
                 else:
                     self.text = txt
-                #creer_monde(monde_name, monde_date_last_connexion)
 
     # Vérifie le focus pour remettre le placeholder si la zone est vide
     def update(self, manager):
@@ -103,12 +120,39 @@ class Game:
         pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
 
+    def run_setting(self):
+        running = True
+
+        pg.display.set_caption("Game")
+    
+        back_button = Button(WIDTH_MAIN_BUTTON, HEIGHT_MAIN_BUTTON, (400, 475), self.screen, color=BACK_COLOR, hover_color=BACK_HOVER_COLOR, color_accent=COLOR_BACK_ACCENT, text="Retour")
+
+        while running:
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    running = False
+                if event.type == pg.KEYDOWN:
+                    # ça permet que quand on fait un "control" "w" ça ferme la fenetre
+                    if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
+                        running = False
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    if back_button.check_click(pg.mouse.get_pos()):
+                        running = False
+                        self.run_main()
+
+            self.screen.fill(COLOR_BACKGROUND)
+            back_button.update(self.screen)
+            back_button.change_color(pg.mouse.get_pos())
+
+            pg.display.flip() # C pour rafraîchir l'écran
+
     def run_play(self):
         running = True
 
         pg.display.set_caption("Game")
     
-        back_button = Button("Retour", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen)
+        back_button = Button(WIDTH_MAIN_BUTTON, HEIGHT_MAIN_BUTTON, (400, 475), self.screen, BACK_COLOR, BACK_HOVER_COLOR, COLOR_BACK_ACCENT, text="Retour")
 
         while running:
 
@@ -140,8 +184,9 @@ class Game:
         
         running = True
         
-        world_name_entry = EntryUsers(400, 200, WIDTH_BUTTON, HEIGHT_BUTTON, "Nom du monde")
-        creation_world_button = Button("Créer le monde", WIDTH_BUTTON, HEIGHT_BUTTON, (400, 275), self.screen, world_name_entry)
+        world_name_entry = EntryUsers(400, 200, WIDTH_MAIN_BUTTON, HEIGHT_MAIN_BUTTON, "Nom du monde")
+        creation_world_button = Button(WIDTH_MAIN_BUTTON, HEIGHT_MAIN_BUTTON, (400, 275), self.screen, color=MAIN_COLOR_TEXT, hover_color=COLOR_MAIN_HOVER, color_accent=COLOR_MAIN_ACCENT,text="Nom du monde", entry=world_name_entry)
+        settings_button = Button(WIDTH_HEIGHT_SETTING_BUTTON, WIDTH_HEIGHT_SETTING_BUTTON, (975,25), self.screen, image="Asset/Logo Setting.png")
 
         while running:
             pg.display.set_caption("Biotope")
@@ -149,10 +194,14 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
+                    #permet de fermer proprement la fenêtre
+                    sys.exit()
                 if event.type == pg.KEYDOWN:
                     # ça permet que quand on fait un "control" "w" ça ferme la fenetre
                     if event.key == pg.K_w and event.mod & pg.KMOD_CTRL:
                         running = False
+                        #permet de fermer proprement la fenêtre
+                        sys.exit()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if creation_world_button.check_click(pg.mouse.get_pos()):
                         monde_name = world_name_entry.get_text()
@@ -160,6 +209,9 @@ class Game:
                             if creer_monde(monde_name, date_actuelle):
                                 running = False
                                 self.run_play()
+                    if settings_button.check_click(pg.mouse.get_pos()):
+                        running = False
+                        self.run_setting()
                         
                 world_name_entry.handle_event(event)
                 self.manager.process_events(event)
@@ -173,6 +225,8 @@ class Game:
             self.manager.draw_ui(self.screen)
             creation_world_button.update(self.screen)
             creation_world_button.change_color(pg.mouse.get_pos())
+            settings_button.update(self.screen)
+            settings_button.change_color(pg.mouse.get_pos())
 
             pg.display.flip() # C pour rafraîchir l'écran
 
