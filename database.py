@@ -1,38 +1,14 @@
 from ressources import *
 
-def generateur_id_monde():
-    try:
-        iden = pandas.read_csv("data_base.csv")
-        existing_ids = iden['id_monde']
-    except Exception as e:
-        messagebox.showerror("Erreur de base de données","Erreur lors de la connexion à la base de données lors de l'enregistrement du monde.")
-        return
-    
-    random_id = random.randint(1000, 9999) #l'id ce sera 4 chiffres random 
-    # Initialisation de la variable
-    compteur = 0
-    while random_id in existing_ids: # tant que l'id généré existe déjà dans la colonne id_monde on en génère un nouveau
-        random_id = random.randint(1000, 9999)
-        if compteur >= 1000:
-            messagebox.showerror("Erreur de répétition","Biotop n'a pas réussi à générer votre monde.")
-            break
-        compteur += 1
-
-    return random_id    
-
-def exist_monde_name(monde_name):
-    with open(nom_fichier_bdd, 'r') as fichier:
-        reader = csv.DictReader(fichier)  # DictReader ça permet de traiter chaque ligne du csv comme un dico avec le header
-        for row in reader:
-            # "row["monde_name"]" ça permet d'avoir accès au data grâce au nom des headers
-            if monde_name in row["monde_name"]:
-                messagebox.showwarning("Erreur","Ce nom de monde est déjà utilisé, essayez en un autre.")
-                # Je le met en True dès qu'il y a une "erreur" en gros
-                return True
-    return False
+try:
+    con = sqlite3.connect("data_base.db")
+    curseur = con.cursor()
+except sqlite3.Error as e:
+    messagebox.showerror("Erreur", "Erreur de base de données lors de la connexion à la base de données !")
+except Exception as e:
+    messagebox.showerror("Erreur", "Une erreur inattendu s'est produite, réessaye !")  
 
 def creer_monde(monde_name, monde_date_last_connexion):
-    id_monde = generateur_id_monde() # on utilise la fonction pour générer un id unique
     monde_date_creation = date_actuelle
 
     nb_limite_caractere = 60
@@ -42,33 +18,28 @@ def creer_monde(monde_name, monde_date_last_connexion):
     if monde_name.lower() in li_mots_sensible:
         messagebox.showwarning("Erreur de sensibilité","Le nom du monde est jugé sensible par Biotope. Essayez un autre nom.")
         return False
-    
-    verif_stop_fonction = exist_monde_name(monde_name)
-
-    if verif_stop_fonction == True:
-        return False
-    # ça c'est le truc pour écrire dans le csv, posez pas de questions
-    write_data = pandas.DataFrame([{
-        "id_monde": id_monde,
-        "monde_name": monde_name,
-        "monde_date_creation": monde_date_creation,
-        "monde_date_last_connexion": monde_date_last_connexion
-    }])
-    write_data.to_csv(nom_fichier_bdd, mode='a', index=False, header=False)
-    messagebox.showinfo(f"Création de {monde_name}",f"Le monde '{monde_name}' a été créé avec l'ID {id_monde}.")
-    return True
-
-def creation_bdd(entetes):
     try:
-        with open(nom_fichier_bdd, 'w') as f:
-            writer = csv.DictWriter(f, fieldnames=entetes)
-            writer.writeheader()
-        # J'ai enlevé "writer.writerows()" parce que il faut absolument un dico mais la une liste suffit
+        curseur.execute(f"INSERT INTO Caract_monde (monde_name, monde_date_creation, monde_date_last_connexion) VALUES (?, ?, ?)", (monde_name, monde_date_creation, monde_date_last_connexion))
+        con.commit()
+        messagebox.showinfo(f"Création de {monde_name}",f"Le monde '{monde_name}' vient d'être créé.")
+        return True
+    except sqlite3.Error as e:
+        messagebox.showerror("Erreur de base de donnée", f"Une erreur est survenue lors de la création du monde.{e}")
+        return False
+    except Exception:
+        messagebox.showerror("Erreur","Une erreur inattendu s'est produite, veuillez réessayer !")
+        return False
 
-    # Je met "as e" c'est pour récupérer l'erreur mais je l'affiche pas parce que l'utilisateur s'en fou de savoir l'erreur exacte
-    # si probleme lors du dev et qu'il faut l'erreur exacte alors : "print(f"Biotope n'arrive pas à créer la base de données, il faut accorder les permissions à Biotope ! {e}")"
-    except PermissionError as e:
-        messagebox.showerror("Erreur de permission","Biotope n'arrive pas à créer la base de données, il faut accorder les permissions à Biotope !")
+def creation_bdd():
+    try:
+        # Identifiant du monde
+        curseur.execute("CREATE TABLE IF NOT EXISTS Caract_monde (" \
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," \
+                "monde_name TEXT UNIQUE NOT NULL," \
+                "monde_date_creation TEXT NOT NULL, " \
+                "monde_date_last_connexion TEXT NOT NULL)")
+    except sqlite3.Error as e:
+        messagebox.showerror("Erreur de base de données","Une erreur est survenue lors de la création de la base de données.")
         return
     except Exception as e:
         messagebox.showerror("Erreur","Une erreur inattendu s'est produite, veuillez réessayer !")
