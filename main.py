@@ -6,7 +6,7 @@ pg.init()
 
 # J'ai mis le bouton dans une class au moins on peut tout le temps le réutilliser
 class Button:
-    def __init__(self, width, height, position, screen, color=None, hover_color=None, color_accent=None, text=None, entry=None, image=None ):
+    def __init__(self, width, height, position, screen, color=None, hover_color=None, color_accent=None, text=None, entry=None, image=None):
         # Initialisation des attributs
         self.pressed = False
 
@@ -120,7 +120,7 @@ class Game:
         pg.display.set_icon(icone_Biotope)
         self.manager = pg_gui.UIManager(self.screen_size)
 
-    def run_setting(self):
+    def run_setting(self, fonction):
         running = True
 
         pg.display.set_caption("Game")
@@ -139,7 +139,7 @@ class Game:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if back_button.check_click(pg.mouse.get_pos()):
                         running = False
-                        self.run_main()
+                        fonction()
 
             self.screen.fill(COLOR_BACKGROUND)
             back_button.update(self.screen)
@@ -170,7 +170,7 @@ class Game:
                         self.run_main()
                     if settings_button.check_click(pg.mouse.get_pos()):
                         running = False
-                        self.run_setting()
+                        self.run_setting(self.run_play)
 
             self.screen.fill(COLOR_BACKGROUND)
             back_button.update(self.screen)
@@ -208,6 +208,13 @@ class Game:
                         running = False
                         #permet de fermer proprement la fenêtre
                         sys.exit()
+                    if event.key == pg.K_RETURN: #création du monde avec la touche entrée
+                        if creation_world_button.check_click((460, 300)): #simule le clic de la souris.
+                            monde_name = world_name_entry.get_text()
+                            if monde_name and monde_name != world_name_entry.placeholder:
+                                if creer_monde(monde_name, date_actuelle):
+                                    running = False
+                                    self.run_play()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if creation_world_button.check_click(pg.mouse.get_pos()):
                         monde_name = world_name_entry.get_text()
@@ -217,7 +224,7 @@ class Game:
                                 self.run_play()
                     if settings_button.check_click(pg.mouse.get_pos()):
                         running = False
-                        self.run_setting()
+                        self.run_setting(self.run_main)
                         
                 world_name_entry.handle_event(event)
                 self.manager.process_events(event)
