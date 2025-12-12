@@ -16,7 +16,8 @@ def creer_monde(monde_name, monde_date_last_connexion):
     try:
         curseur.execute("SELECT monde_name FROM Caract_monde WHERE monde_name = ?", (monde_name,))
         result_name = curseur.fetchone()
-    except:
+    except sqlite3.Error as e:
+        messagebox.showerror("Erreur de base de donnée", "Une erreur est survenue lors de la création du monde.")
         return False
 
     if len(monde_name) >= nb_limite_caractere:
