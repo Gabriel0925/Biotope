@@ -2,11 +2,6 @@ from ressources import *
 
 # Ce fichier servira à créer la map et la gérer
 
-import pygame
-from pygame.locals import *
-from sys import exit
-from PIL import Image  # Pour le traitement d'images
-
 class Terrain:
     def __init__(self, map_filenames, size_spriteX=64, size_spriteY=64, nb_spritesX=18, nb_spritesY=12):
         """
@@ -18,9 +13,9 @@ class Terrain:
         :param nb_spritesY: Nombre de tuiles en hauteur.
         """
 
-        pygame.init()
-        self.screen = pygame.display.set_mode((nb_spritesX * size_spriteX, nb_spritesY * size_spriteY))
-        pygame.display.set_caption("Terrain Pygame")
+        pg.init()
+        self.screen = pg.display.set_mode((nb_spritesX * size_spriteX, nb_spritesY * size_spriteY))
+        pg.display.set_caption("Terrain Pygame")
 
         # Chemins et tailles
         self.path_media = 'Asset/map/'
@@ -72,7 +67,7 @@ class Terrain:
                 )
 
         # Conversion pour Pygame
-        self.background_img = pygame.image.fromstring(
+        self.background_img = pg.image.fromstring(
             background_pil.tobytes(),
             background_pil.size,
             'RGBA'

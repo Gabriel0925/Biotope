@@ -57,7 +57,7 @@ class Button:
             else:
                 self.text_surface = self.font.render(self.text, True, self.color)
 
-# Pour entry users c pygame_gui qui gère tout
+# Pour entry users c pg_gui qui gère tout
 class EntryUsers:
     def __init__(self, x, y, width, height, default_text=""):
         self.placeholder = default_text
