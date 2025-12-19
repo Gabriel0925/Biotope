@@ -7,6 +7,8 @@ import pygame_gui as pg_gui # Il faut faire un pip install
 from datetime import date
 import pandas # Il faut faire un pip install (parce que moi je l'avais pas)
 from tkinter import messagebox # il faut faire un pip install
+from pygame.locals import *
+from PIL import Image #il faut pip install pillow
 
 # Couleur de Biotope (je met en majuscule pour la lisibilité)
 COLOR_MAIN_ACCENT = "#355E3B"
